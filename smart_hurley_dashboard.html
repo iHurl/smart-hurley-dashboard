@@ -21,7 +21,7 @@
     google.charts.setOnLoadCallback(drawDashboard);
 
     function drawDashboard() {
-      const query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1WMsdSVMl6S4EZ_BZ-JPoHqdSZp1Om1pSfuht65gclo0/gviz/tq?sheet=Sheet1');
+      const query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD_FygAl0/gviz/tq?sheet=Sheet1');
 
       query.send(function(response) {
         if (response.isError()) {
