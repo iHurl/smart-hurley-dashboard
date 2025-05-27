@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Hurley Dashboard</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+  <h2>Smart Hurley Player Dashboard</h2>
+  <div id="dashboard_div">
+    <div id="filters" style="margin-bottom: 20px;">
+      <div id="club_filter" style="display: inline-block; width: 200px;"></div>
+      <div id="player_filter" style="display: inline-block; width: 200px;"></div>
+    </div>
+    <div id="bar_chart" style="width: 100%; height: 400px;"></div>
+    <div id="line_chart" style="width: 100%; height: 400px;"></div>
+    <div id="pie_chart" style="width: 100%; height: 400px;"></div>
+  </div>
+
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart', 'controls']});
+    google.charts.setOnLoadCallback(drawDashboard);
+
+    function drawDashboard() {
+      const query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1WMsdSVMl6S4EZ_BZ-JPoHqdSZp1Om1pSfuht65gclo0/gviz/tq?sheet=Sheet1');
+
+      query.send(function(response) {
+        if (response.isError()) {
+          document.body.innerHTML = 'Error: ' + response.getMessage();
+          return;
+        }
+
+        const data = response.getDataTable();
+        const dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
+
+        const clubFilter = new google.visualization.ControlWrapper({
+          controlType: 'CategoryFilter',
+          containerId: 'club_filter',
+          options: {
+            filterColumnLabel: 'Club',
+            ui: {
+              label: 'Filter by Club:',
+              allowTyping: false,
+              allowMultiple: true
+            }
+          }
+        });
+
+        const playerFilter = new google.visualization.ControlWrapper({
+          controlType: 'CategoryFilter',
+          containerId: 'player_filter',
+          options: {
+            filterColumnLabel: 'Player Name',
+            ui: {
+              label: 'Filter by Player:',
+              allowTyping: false,
+              allowMultiple: false
+            }
+          }
+        });
+
+        const barChart = new google.visualization.ChartWrapper({
+          chartType: 'ColumnChart',
+          containerId: 'bar_chart',
+          options: {
+            title: 'Right vs Left Hits',
+            hAxis: {title: 'Player'},
+            vAxis: {title: 'Hits'},
+            legend: { position: 'top' }
+          },
+          view: {
+            columns: [1, 4, 5] // Player Name, Left Hits, Right Hits
+          }
+        });
+
+        const lineChart = new google.visualization.ChartWrapper({
+          chartType: 'LineChart',
+          containerId: 'line_chart',
+          options: {
+            title: 'Total Time per Session',
+            hAxis: {title: 'Date'},
+            vAxis: {title: 'Time (minutes)'},
+            legend: { position: 'bottom' }
+          },
+          view: {
+            columns: [0, 9] // Date, Total Time (min)
+          }
+        });
+
+        const pieChart = new google.visualization.ChartWrapper({
+          chartType: 'PieChart',
+          containerId: 'pie_chart',
+          options: {
+            title: 'Activity Breakdown (Striking)',
+            is3D: true
+          },
+          view: {
+            columns: [1, 6] // Player Name, Striking
+          }
+        });
+
+        dashboard.bind([clubFilter, playerFilter], [barChart, lineChart, pieChart]);
+        dashboard.draw(data);
+      });
+    }
+  </script>
+</body>
+</html>
