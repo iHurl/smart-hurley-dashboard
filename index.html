@@ -1,108 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Smart Hurley Dashboard</title>
-  <meta charset="UTF-8">
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <title>Smart Hurley Demo Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+    header { background: #007b5e; color: white; padding: 20px; text-align: center; }
+    section { padding: 20px; max-width: 1200px; margin: auto; }
+    h2 { color: #007b5e; }
+    .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+    iframe { width: 100%; height: 300px; border: 1px solid #ccc; }
+    .filters, .actions { margin-top: 20px; display: flex; gap: 10px; }
+    button { padding: 10px 15px; background: #007b5e; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #005f46; }
+  </style>
 </head>
 <body>
-  <h2>Smart Hurley Player Dashboard</h2>
-  <div id="dashboard_div">
-    <div id="filters" style="margin-bottom: 20px;">
-      <div id="club_filter" style="display: inline-block; width: 200px;"></div>
-      <div id="player_filter" style="display: inline-block; width: 200px;"></div>
+  <header>
+    <h1>Smart Hurley Player & Performance Dashboard</h1>
+  </header>
+
+  <section>
+    <h2>For Players & Parents</h2>
+    <div class="dashboard">
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=123456&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=123457&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=123458&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=123459&format=interactive"></iframe>
     </div>
-    <div id="bar_chart" style="width: 100%; height: 400px;"></div>
-    <div id="line_chart" style="width: 100%; height: 400px;"></div>
-    <div id="pie_chart" style="width: 100%; height: 400px;"></div>
-  </div>
+    <div class="filters">
+      <label>Filter by Date: <input type="date"></label>
+      <label>Filter by Session: <select><option>Session 1</option><option>Session 2</option></select></label>
+    </div>
+    <div class="actions">
+      <button>Download Performance PDF</button>
+      <button>Claim Weekly Voucher</button>
+    </div>
+  </section>
 
-  <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart', 'controls']});
-    google.charts.setOnLoadCallback(drawDashboard);
+  <section>
+    <h2>For Coaches & Clubs</h2>
+    <div class="dashboard">
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=223456&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=223457&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=223458&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=223459&format=interactive"></iframe>
+    </div>
+    <div class="filters">
+      <label>Filter by Player: <input type="text" placeholder="Search name..."></label>
+      <label>Filter by Age Group: <select><option>U6</option><option>U8</option><option>U10</option><option>U12</option></select></label>
+    </div>
+    <div class="actions">
+      <button>Start New Session</button>
+      <button>End Session & Save</button>
+    </div>
+  </section>
 
-    function drawDashboard() {
-      const query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1WMsdSVMl6S4EZ_BZ-JPoHqdSZp1Om1pSfuht65gclo0/gviz/tq?sheet=Sheet1');
-
-      query.send(function(response) {
-        if (response.isError()) {
-          document.body.innerHTML = 'Error: ' + response.getMessage();
-          return;
-        }
-
-        const data = response.getDataTable();
-        const dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
-
-        const clubFilter = new google.visualization.ControlWrapper({
-          controlType: 'CategoryFilter',
-          containerId: 'club_filter',
-          options: {
-            filterColumnLabel: 'Club',
-            ui: {
-              label: 'Filter by Club:',
-              allowTyping: false,
-              allowMultiple: true
-            }
-          }
-        });
-
-        const playerFilter = new google.visualization.ControlWrapper({
-          controlType: 'CategoryFilter',
-          containerId: 'player_filter',
-          options: {
-            filterColumnLabel: 'Player Name',
-            ui: {
-              label: 'Filter by Player:',
-              allowTyping: false,
-              allowMultiple: false
-            }
-          }
-        });
-
-        const barChart = new google.visualization.ChartWrapper({
-          chartType: 'ColumnChart',
-          containerId: 'bar_chart',
-          options: {
-            title: 'Right vs Left Hits',
-            hAxis: {title: 'Player'},
-            vAxis: {title: 'Hits'},
-            legend: { position: 'top' }
-          },
-          view: {
-            columns: [1, 4, 5]
-          }
-        });
-
-        const lineChart = new google.visualization.ChartWrapper({
-          chartType: 'LineChart',
-          containerId: 'line_chart',
-          options: {
-            title: 'Total Time per Session',
-            hAxis: {title: 'Date'},
-            vAxis: {title: 'Time (minutes)'},
-            legend: { position: 'bottom' }
-          },
-          view: {
-            columns: [0, 9]
-          }
-        });
-
-        const pieChart = new google.visualization.ChartWrapper({
-          chartType: 'PieChart',
-          containerId: 'pie_chart',
-          options: {
-            title: 'Activity Breakdown (Striking)',
-            is3D: true
-          },
-          view: {
-            columns: [1, 6]
-          }
-        });
-
-        dashboard.bind([clubFilter, playerFilter], [barChart, lineChart, pieChart]);
-        dashboard.draw(data);
-      });
-    }
-  </script>
+  <section>
+    <h2>County & Governing Body Overview</h2>
+    <div class="dashboard">
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=323456&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=323457&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD/pubchart?oid=323458&format=interactive"></iframe>
+      <iframe src="https://docs.google.com/spreadsheets/d/e/1z64nim5yiHjVYcAyTePuCoYeDm4EhrILfgbD_FygAl0/pubchart?oid=323459&format=interactive"></iframe>
+    </div>
+    <div class="filters">
+      <label>Select County: <select><option>Sligo</option><option>Antrim</option><option>Cork</option></select></label>
+      <label>Club Performance Tier: <select><option>All</option><option>Top 10%</option><option>Needs Support</option></select></label>
+    </div>
+    <div class="actions">
+      <button>Export County Summary</button>
+      <button>Set Weekly Goals</button>
+    </div>
+  </section>
 </body>
 </html>
